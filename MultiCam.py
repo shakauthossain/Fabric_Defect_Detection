@@ -131,25 +131,25 @@ if start_stream:
     cap = start_feed(camera_source)
 
     while not stop_stream:
-    if camera_source == "ESP32-CAM (HTTP URL)":
-        frame = read_esp32_frame(esp32_url)
-        if frame is None:
-            st.error("Failed to fetch ESP32-CAM frame. Check URL and connection.")
+        if camera_source == "ESP32-CAM (HTTP URL)":
+            frame = read_esp32_frame(esp32_url)
+            if frame is None:
+                st.error("Failed to fetch ESP32-CAM frame. Check URL and connection.")
+                break
+        elif camera_source == "camera_input_live":
+            # Ensure `camera_input_live` is implemented to provide frames
+            frame = cap.read()  # Adjust based on its actual output format
+            if frame is None:
+                st.error("Failed to fetch frame from camera_input_live. Check connection.")
+                break
+        elif isinstance(cap, cv2.VideoCapture):
+            ret, frame = cap.read()
+            if not ret:
+                st.error("Failed to fetch frame. Check the camera source.")
+                break
+        else:
+            st.error("Camera source is not initialized. Exiting stream.")
             break
-    elif camera_source == "camera_input_live":
-        # Ensure `camera_input_live` is implemented to provide frames
-        frame = cap.read()  # Adjust based on its actual output format
-        if frame is None:
-            st.error("Failed to fetch frame from camera_input_live. Check connection.")
-            break
-    elif isinstance(cap, cv2.VideoCapture):
-        ret, frame = cap.read()
-        if not ret:
-            st.error("Failed to fetch frame. Check the camera source.")
-            break
-    else:
-        st.error("Camera source is not initialized. Exiting stream.")
-        break
 
         # Perform YOLO inference
         results = model.predict(source=frame, conf=confidence_threshold)
