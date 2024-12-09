@@ -84,7 +84,7 @@ stop_stream = st.sidebar.button("Stop Streaming")
 
 def read_esp32_frame(url):
     """Fetch a single frame from ESP32-CAM."""
-    response = requests.get(url, stream=True, timeout=5)
+    response = requests.get(url, stream=True, timeout=10)
     bytes_data = bytes()
     for chunk in response.iter_content(chunk_size=1024):
         bytes_data += chunk
