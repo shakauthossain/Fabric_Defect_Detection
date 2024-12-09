@@ -100,13 +100,13 @@ def read_esp32_frame(url):
 def start_feed(source):
     """Start the video feed from the selected source."""
     if source == "Webcam (Default)":
-        cap = cv2.VideoCapture(0)
+        return st.camera_input("Select Camera")
 
     elif source == "External Camera (Index 1)":
         cap = cv2.VideoCapture(1)
 
     elif source == "ESP32-CAM (HTTP URL)":
-        cap = None  # We'll fetch frames manually from the URL
+        return None  # We'll fetch frames manually from the URL
 
     elif source == "RTSP Stream":
         cap = cv2.VideoCapture(rtsp_url)
