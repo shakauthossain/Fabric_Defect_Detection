@@ -102,10 +102,11 @@ def start_feed(source):
     cap = None  # Default value
 
     if source == "Webcam (Default)":
-        cap = cv2.VideoCapture(0)  # Initialize OpenCV webcam
+        #cap = cv2.VideoCapture(0)  # Initialize OpenCV webcam
         #cap = cv2.VideoCapture(dev)
         #dev = st.camera_input("Select Camera")
         #return st.camera_input("Select Camera")
+        return webrtc_streamer
     
     elif source == "External Camera (Index 1)":
         cap = cv2.VideoCapture(1)  # Initialize external camera
@@ -122,6 +123,28 @@ def start_feed(source):
 
     return cap
 
+class YOLOVideoTransformer(VideoTransformerBase):
+    def __init__(self):
+        self.model = model
+
+    def transform(self, frame):
+        # Convert frame to a NumPy array
+        img = frame.to_ndarray(format="bgr24")
+
+        # Perform YOLO inference
+        results = self.model.predict(source=img, conf=confidence_threshold)
+
+        # Annotate the frame
+        annotated_frame = results[0].plot()
+
+        return annotated_frame
+
+webrtc_streamer(
+    key="object-detection",
+    video_transformer_factory=YOLOVideoTransformer,
+    media_stream_constraints={"video": True, "audio": False},
+    rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
+)
 
 def stop_feed(cap):
     """Stop the video feed."""
