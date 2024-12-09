@@ -103,6 +103,7 @@ def start_feed(source):
     if source == "Webcam (Default)":
         #cap = cv2.VideoCapture(0)
         cap = camera_input_live()
+        st.image(value)
 
     elif source == "External Camera (Index 1)":
         cap = cv2.VideoCapture(1)
