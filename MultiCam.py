@@ -103,7 +103,7 @@ def start_feed(source):
     if source == "Webcam (Default)":
         #cap = cv2.VideoCapture(0)
         cap = camera_input_live()
-        st.image(value)
+        #st.image(value)
 
     elif source == "External Camera (Index 1)":
         cap = cv2.VideoCapture(1)
@@ -113,6 +113,10 @@ def start_feed(source):
 
     elif source == "RTSP Stream":
         cap = cv2.VideoCapture(rtsp_url)
+
+    if isinstance(cap, cv2.VideoCapture) and not cap.isOpened():
+        st.error("Failed to open camera. Check source or connection.")
+        cap = None
 
     return cap
 
@@ -127,16 +131,25 @@ if start_stream:
     cap = start_feed(camera_source)
 
     while not stop_stream:
-        if camera_source == "ESP32-CAM (HTTP URL)":
-            frame = read_esp32_frame(esp32_url)
-            if frame is None:
-                st.error("Failed to fetch ESP32-CAM frame. Check URL and connection.")
-                break
-        else:
-            ret, frame = cap.read()
-            if not ret:
-                st.error("Failed to fetch frame. Check the camera source.")
-                break
+    if camera_source == "ESP32-CAM (HTTP URL)":
+        frame = read_esp32_frame(esp32_url)
+        if frame is None:
+            st.error("Failed to fetch ESP32-CAM frame. Check URL and connection.")
+            break
+    elif camera_source == "camera_input_live":
+        # Ensure `camera_input_live` is implemented to provide frames
+        frame = cap.read()  # Adjust based on its actual output format
+        if frame is None:
+            st.error("Failed to fetch frame from camera_input_live. Check connection.")
+            break
+    elif isinstance(cap, cv2.VideoCapture):
+        ret, frame = cap.read()
+        if not ret:
+            st.error("Failed to fetch frame. Check the camera source.")
+            break
+    else:
+        st.error("Camera source is not initialized. Exiting stream.")
+        break
 
         # Perform YOLO inference
         results = model.predict(source=frame, conf=confidence_threshold)
