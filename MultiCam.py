@@ -3,7 +3,6 @@ from ultralytics import YOLO
 import cv2
 import requests
 import numpy as np
-from camera_input_live import camera_input_live
 
 # Load the trained YOLOv8 model
 model = YOLO('best.pt')  # Replace 'best.pt' with your YOLOv8 model path
@@ -101,10 +100,7 @@ def read_esp32_frame(url):
 def start_feed(source):
     """Start the video feed from the selected source."""
     if source == "Webcam (Default)":
-        #cap = cv2.VideoCapture(0)
-        #cap = camera_input_live()
-        cap = st.camera_input()
-        #st.image(value)
+        cap = cv2.VideoCapture(0)
 
     elif source == "External Camera (Index 1)":
         cap = cv2.VideoCapture(1)
@@ -114,10 +110,6 @@ def start_feed(source):
 
     elif source == "RTSP Stream":
         cap = cv2.VideoCapture(rtsp_url)
-
-    if isinstance(cap, cv2.VideoCapture) and not cap.isOpened():
-        st.error("Failed to open camera. Check source or connection.")
-        cap = None
 
     return cap
 
@@ -137,20 +129,11 @@ if start_stream:
             if frame is None:
                 st.error("Failed to fetch ESP32-CAM frame. Check URL and connection.")
                 break
-        elif camera_source == "camera_input_live":
-            # Ensure `camera_input_live` is implemented to provide frames
-            frame = cap.read()  # Adjust based on its actual output format
-            if frame is None:
-                st.error("Failed to fetch frame from camera_input_live. Check connection.")
-                break
-        elif isinstance(cap, cv2.VideoCapture):
+        else:
             ret, frame = cap.read()
             if not ret:
                 st.error("Failed to fetch frame. Check the camera source.")
                 break
-        else:
-            st.error("Camera source is not initialized. Exiting stream.")
-            break
 
         # Perform YOLO inference
         results = model.predict(source=frame, conf=confidence_threshold)
