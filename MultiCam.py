@@ -11,7 +11,7 @@ model = YOLO('best.pt')  # Replace 'best.pt' with your YOLOv8 model path
 # Streamlit App Configuration
 st.set_page_config(
     page_title="Multi-Camera Object Detection",
-    page_icon="\ud83d\udcfc",
+    page_icon="camera",  # Use a plain string instead of an emoji
     layout="wide"
 )
 
