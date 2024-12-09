@@ -125,16 +125,19 @@ if start_stream:
     cap = start_feed(camera_source)
 
     while not stop_stream:
-        if camera_source == "ESP32-CAM (HTTP URL)":
+        if cap == "ESP32":  # Special handling for ESP32-CAM
             frame = read_esp32_frame(esp32_url)
             if frame is None:
                 st.error("Failed to fetch ESP32-CAM frame. Check URL and connection.")
                 break
-        else:
+        elif isinstance(cap, cv2.VideoCapture):  # Handle OpenCV video sources
             ret, frame = cap.read()
             if not ret:
                 st.error("Failed to fetch frame. Check the camera source.")
                 break
+        else:
+            st.error("Camera source is not initialized. Exiting stream.")
+            break
 
         # Perform YOLO inference
         results = model.predict(source=frame, conf=confidence_threshold)
@@ -149,7 +152,7 @@ if start_stream:
         video_placeholder.image(annotated_frame_rgb, channels="RGB", use_column_width=True)
 
     # Stop the feed when 'Stop Streaming' is clicked
-    if cap is not None:
+    if isinstance(cap, cv2.VideoCapture):
         stop_feed(cap)
 
 # Footer
