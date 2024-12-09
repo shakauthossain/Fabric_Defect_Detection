@@ -135,9 +135,9 @@ if start_stream:
             if not ret:
                 st.error("Failed to fetch frame. Check the camera source.")
                 break
-        else:
-            st.error("Camera source is not initialized. Exiting stream.")
-            break
+        #else:
+            #st.error("Camera source is not initialized. Exiting stream.")
+            #break
 
         # Perform YOLO inference
         results = model.predict(source=frame, conf=confidence_threshold)
