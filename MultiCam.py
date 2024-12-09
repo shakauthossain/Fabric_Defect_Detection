@@ -174,4 +174,8 @@ if camera_source == "Webcam (Default)":
     )
 
 # Footer
-st.markdown("<div class='footer'>Built with \ud83d\udca1 using Streamlit and WebRTC | Powered by YOLOv8</div>", unsafe_allow_html=True)
+st.markdown(
+    "<div class='footer'>Built with &#128161; using Streamlit and WebRTC | Powered by YOLOv8</div>",
+    unsafe_allow_html=True,
+)
+
