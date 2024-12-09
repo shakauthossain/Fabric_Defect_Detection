@@ -108,11 +108,13 @@ def start_feed(source):
         cap = None  # We'll fetch frames manually from the URL
     elif source == "RTSP Stream":
         cap = cv2.VideoCapture(rtsp_url)
-    
+
     if cap and not cap.isOpened():
         st.error("Failed to open camera. Check camera source and connection.")
         return None
+
     return cap
+
 
 def stop_feed(cap):
     """Stop the video feed."""
