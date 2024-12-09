@@ -99,20 +99,26 @@ def read_esp32_frame(url):
 
 def start_feed(source):
     """Start the video feed from the selected source."""
+    cap = None  # Default value
+
     if source == "Webcam (Default)":
-        #cap = cv2.VideoCapture(0)
-        return st.camera_input("Select Camera")
+        cap = cv2.VideoCapture(0)  # Initialize OpenCV webcam
 
     elif source == "External Camera (Index 1)":
-        cap = cv2.VideoCapture(1)
+        cap = cv2.VideoCapture(1)  # Initialize external camera
 
     elif source == "ESP32-CAM (HTTP URL)":
-        cap = None  # We'll fetch frames manually from the URL
+        cap = "ESP32"  # Placeholder, no VideoCapture needed for ESP32
 
     elif source == "RTSP Stream":
         cap = cv2.VideoCapture(rtsp_url)
 
+    if isinstance(cap, cv2.VideoCapture) and not cap.isOpened():
+        st.error("Failed to open camera. Check source or connection.")
+        cap = None  # Reset cap if initialization failed
+
     return cap
+
 
 def stop_feed(cap):
     """Stop the video feed."""
@@ -135,9 +141,9 @@ if start_stream:
             if not ret:
                 st.error("Failed to fetch frame. Check the camera source.")
                 break
-        #else:
-            #st.error("Camera source is not initialized. Exiting stream.")
-            #break
+        else:
+            st.error("Camera source is not initialized. Exiting stream.")
+            break
 
         # Perform YOLO inference
         results = model.predict(source=frame, conf=confidence_threshold)
