@@ -3,6 +3,7 @@ from ultralytics import YOLO
 import cv2
 import requests
 import numpy as np
+from streamlit_webrtc import VideoTransformerBase
 
 # Load the trained YOLOv8 model
 model = YOLO('best.pt')  # Replace 'best.pt' with your YOLOv8 model path
