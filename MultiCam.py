@@ -70,7 +70,7 @@ camera_source = st.sidebar.selectbox("Select Camera Source", camera_options)
 confidence_threshold = st.sidebar.slider("Confidence Threshold", 0.0, 1.0, 0.6, 0.01)
 
 if camera_source == "ESP32-CAM (HTTP URL)":
-    esp32_url = st.sidebar.text_input("Enter ESP32-CAM Stream URL", "http://192.168.0.113/stream")
+    esp32_url = st.sidebar.text_input("Enter ESP32-CAM Stream URL", "http://103.87.138.109:8080/stream")
 
 elif camera_source == "RTSP Stream":
     rtsp_url = st.sidebar.text_input("Enter RTSP Stream URL", "rtsp://username:password@192.168.0.1:554/stream")
